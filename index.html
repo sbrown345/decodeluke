@@ -5,24 +5,22 @@
     </head>
     <body>
         <div>
-            <textarea name="coded" id="coded" cols="200" style="width:100%;height:200px;">
-                .. k_d_]_]_i m_p_y_u_k_g_d_i
-, v_w f_k_i_e_u_i_y_a
-... f_._h k_]_]_h i_l_[_._k_g t_[_#_# l_f_ 
-_
-_y_.
-
-,,,. e_f_q 
-,,.. k_e_y 
-,, y_ Y_V E_F_Q 
-.. ;_T_I_M_[_D_Y_G
-
-, W_B_H_I_T 
-
-</textarea>
+            <textarea name="coded" id="coded" cols="200" style="height: 200px; width: 100%;"></textarea>
         </div>
         <div>
-            <textarea name="decoded" id="decoded" style="width:100%;height:200px"></textarea>
+            <textarea name="decoded" id="decoded" style="height: 200px; width: 100%;">
+happy birthday
+be glorious
+and good things will haen
+
+the 
+key 
+i in the 
+keyboard
+
+enjoy
+
+</textarea>
         </div>
         <script>
             var rows = [
@@ -32,16 +30,79 @@ _y_.
                 "\\zxcvbnm,./".split("")
             ];
 
-            coded.onchange = function() {
-                decoded.value = decode(coded.value);
-            };
-            
-            //decoded.onchange = function () {
+            //coded.onchange = function() {
+            //    decoded.value = decode(coded.value);
+            //};
+
+            //decoded.onchange = function() {
             //    coded.value = code(decoded.value);
             //};
-            
-            coded.onchange();
-            
+
+            //decoded.onchange();
+            //coded.onchange();
+            coded.value = code(decoded.value);
+            console.log(decode(coded.value));
+
+            function code(original) {
+
+                function tryUpdateShift() {
+                    for (; ;) {
+                        updateShift();
+                        if (shiftIndex >= -3 && shiftIndex <= 3) {
+                            console.log("Updated shift. shiftIndex: %i, shift: %s", shiftIndex, shift);
+                            break;
+                        }
+                    }
+                }
+                
+                function updateShift() {
+                    shift = "";
+                    shiftIndex = 0;
+                    var shiftLength = (Math.random() * 6 | 0)+1;
+                    for (var i = 0; i < shiftLength; i++) {
+                        var shiftChar = possibleShiftChars[Math.random() * 2 | 0];
+                        shift += shiftChar;
+                        shiftIndex += (-(45 - ".".charCodeAt())); // super readable!
+                    }
+                }
+                
+                original = original.trim();
+                var possibleShiftChars = ",.";
+                var shift = "";
+                var shiftIndex = 0;
+                debugger;
+                var WRITE_SHIFT = "WRITE_SHIFT";
+                var WRITE = "WRITE";
+                var mode = WRITE_SHIFT;
+                var output = "";
+                for (var i = 0, char = original[i]; i < original.length; char = original[++i]) {
+                    var nextChar = original[i + 1];
+                    switch (mode) {
+                    case WRITE_SHIFT:
+                        tryUpdateShift();
+                        output += (shift + " ");
+                        mode = WRITE;
+                        case WRITE:
+                            if (/\s\s/.test(char + nextChar)) {
+                                output += char;
+                            }
+                            else if (char == "\n") {
+                                mode = WRITE_SHIFT;
+                                output += "\n";
+                            } else if (char == " "){
+                                output += " ";
+                            }else {
+                                output += shiftChar(char, shiftIndex);
+                                output += "_";
+                            }
+                            break;
+                    default:
+                    }
+                }
+
+                return output;
+            }
+
             function decode(source) {
                 source = source.trim();
                 var output = "";
@@ -51,7 +112,7 @@ _y_.
                 var mode = READ_SHIFT;
                 for (var i = 0; i < source.length; i++) {
                     var char = source[i];
-                    var nextChar = source[i+1];
+                    var nextChar = source[i + 1];
                     switch (mode) {
                     case READ_SHIFT:
                         if (char == ",") {
@@ -69,10 +130,9 @@ _y_.
                             output += "\n";
                             mode = READ_SHIFT;
                             shift = 0;
-                        }
-                        else if (char == "\n") output += "\n";
+                        } else if (char == "\n") output += "\n";
                         else if (/\s/.test(char)) output += " ";
-                        else output += decodeChar(char, shift);
+                        else output += shiftChar(char, shift);
 
                         break;
                     default:
@@ -81,8 +141,8 @@ _y_.
 
                 return output;
             }
-            
-            function decodeChar(char, shift) {
+
+            function shiftChar(char, shift) {
                 char = char.toLowerCase();
                 for (var i = 0; i < rows.length; i++) {
                     var row = rows[i];
@@ -92,12 +152,8 @@ _y_.
                         }
                     }
                 }
-                
-                return "?";
-            }
 
-            function code(code) {
-                
+                return "?";
             }
 
         </script>
