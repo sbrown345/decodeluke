@@ -1,26 +1,17 @@
 ﻿<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
-        <title>decode luke</title>
+        <title>Decode wtf Luke is saying</title>
     </head>
     <body>
+        <h1>Decode wtf Luke is saying</h1>
         <div>
+            Coded:<br/>
             <textarea name="coded" id="coded" cols="200" style="height: 200px; width: 100%;"></textarea>
         </div>
         <div>
-            <textarea name="decoded" id="decoded" style="height: 200px; width: 100%;">
-happy birthday
-be glorious
-and good things will haen
-
-the 
-key 
-i in the 
-keyboard
-
-enjoy
-
-</textarea>
+            Decoded:<br/>
+            <textarea name="decoded" id="decoded" style="height: 200px; width: 100%;"></textarea>
         </div>
         <script>
             var rows = [
@@ -30,66 +21,45 @@ enjoy
                 "\\zxcvbnm,./".split("")
             ];
 
-            //coded.onchange = function() {
-            //    decoded.value = decode(coded.value);
-            //};
+            coded.onchange = function() {
+                decoded.value = decode(coded.value);
+            };
 
-            //decoded.onchange = function() {
-            //    coded.value = code(decoded.value);
-            //};
-
-            //decoded.onchange();
-            //coded.onchange();
-            coded.value = code(decoded.value);
-            console.log(decode(coded.value));
+            decoded.onchange = function() {
+                coded.value = code(decoded.value);
+            };
 
             function code(original) {
 
                 function tryUpdateShift() {
                     for (; ;) {
                         updateShift();
-                        if (shiftIndex >= -3 && shiftIndex <= 3) {
-                            console.log("Updated shift. shiftIndex: %i, shift: %s", shiftIndex, shift);
+                        if (shiftIndex >= -3 && shiftIndex <= 3 && shiftIndex != 0) {
+                            //console.log("Updated shift. shiftIndex: %i, shift: %s", shiftIndex, shift);
                             break;
                         }
                     }
                 }
 
-                var debug = [
-                    ["..", 2],
-                    [",", -1],
-                    ["...", 3],
-                    [",,,.", -2],
-                    [",,..", 0],
-                    [",,", -2],
-                    ["..", 2],
-                    [",", -1]
-                ];
-                var ui = 0;
                 function updateShift() {
-                    shift = debug[ui][0]
-                    shiftIndex = debug[ui][1]
-                    ui++
-
-                    //shift = "";
-                    //shiftIndex = 0;
-                    //var shiftLength = (Math.random() * 6 | 0)+1;
-                    //for (var i = 0; i < shiftLength; i++) {
-                    //    var shiftChar = possibleShiftChars[Math.random() * 2 | 0];
-                    //    shift += shiftChar;
-                    //    shiftIndex += (-(45 - ".".charCodeAt())); // super readable!
-                    //}
+                    shift = "";
+                    shiftIndex = 0;
+                    var shiftLength = (Math.random() * 4 | 0)+1;
+                    for (var i = 0; i < shiftLength; i++) {
+                        var shiftChar = possibleShiftChars[Math.random() * 2 | 0];
+                        shift += shiftChar;
+                        shiftIndex += (-(45 - shiftChar.charCodeAt())); // super readable!
+                    }
                 }
                 
                 original = original.trim();
                 var possibleShiftChars = ",.";
                 var shift = "";
                 var shiftIndex = 0;
-                debugger;
                 var output = "";
                 var lines = original.split("\n");
                 
-                restart_line:
+                restartLine:
                 for (var l = 0; l < lines.length; l++) {
                     var line = lines[l];
                     if (!line || !line.trim()) continue;
@@ -100,34 +70,21 @@ enjoy
 
                     var lineOutput = "";
                     tryUpdateShift();
-                    lineOutput += (shift + " ");
+                    lineOutput += (/*shiftIndex + " " +*/shift + " ");
                     for (var i = 0, ch = line[i]; i < line.length; ch = line[++i]) {
                         if (ch == " ") {
                             lineOutput += ch;
                         }  else {
                             var outputChar = shiftChar(ch, shiftIndex);
-                            if (typeof outputChar == "undefined") {
-                                debugger
+                            if (!outputChar) {
                                 l--;
-                                continue restart_line;
+                                continue restartLine;
                             }
-                            var reversed = shiftChar(outputChar, -shiftIndex);
-                            if (typeof reversed == "undefined") {
-                                debugger
-                                l--;
-                                continue restart_line;
-                            }
-                            if (ch != reversed) {
-                                debugger
-                                l--;
-                                continue restart_line;
-                            }
+                            //console.log("in ch: %s, out: %s, reversed: %s", ch, outputChar, reversed);
                             lineOutput += outputChar;
                             lineOutput += "_";
                         }
                     }
-                    
-
 
                     output += (lineOutput + "\n");
                 }
