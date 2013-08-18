@@ -1,0 +1,105 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>decode luke</title>
+    </head>
+    <body>
+        <div>
+            <textarea name="coded" id="coded" cols="200" style="width:100%;height:200px;">
+                .. k_d_]_]_i m_p_y_u_k_g_d_i
+, v_w f_k_i_e_u_i_y_a
+... f_._h k_]_]_h i_l_[_._k_g t_[_#_# l_f_ 
+_
+_y_.
+
+,,,. e_f_q 
+,,.. k_e_y 
+,, y_ Y_V E_F_Q 
+.. ;_T_I_M_[_D_Y_G
+
+, W_B_H_I_T 
+
+</textarea>
+        </div>
+        <div>
+            <textarea name="decoded" id="decoded" style="width:100%;height:200px"></textarea>
+        </div>
+        <script>
+            var rows = [
+                "`1234567890-=".split(""),
+                "qwertyuiop[]".split(""),
+                "asdfghjkl;'#".split(""),
+                "\\zxcvbnm,./".split("")
+            ];
+
+            coded.onchange = function() {
+                decoded.value = decode(coded.value);
+            };
+            
+            //decoded.onchange = function () {
+            //    coded.value = code(decoded.value);
+            //};
+            
+            coded.onchange();
+            
+            function decode(source) {
+                source = source.trim();
+                var output = "";
+                var READ_SHIFT = "READ_SHIFT";
+                var READ_CODE = "READ_CODE";
+                var shift = 0;
+                var mode = READ_SHIFT;
+                for (var i = 0; i < source.length; i++) {
+                    var char = source[i];
+                    var nextChar = source[i+1];
+                    switch (mode) {
+                    case READ_SHIFT:
+                        if (char == ",") {
+                            shift++;
+                            break;
+                        } else if (char == ".") {
+                            shift--;
+                            break;
+                        } else {
+                            mode = READ_CODE;
+                        }
+                    case READ_CODE:
+                        if (char == "_") continue;
+                        else if (char == "\n" && (nextChar == "," || nextChar == ".")) {
+                            output += "\n";
+                            mode = READ_SHIFT;
+                            shift = 0;
+                        }
+                        else if (char == "\n") output += "\n";
+                        else if (/\s/.test(char)) output += " ";
+                        else output += decodeChar(char, shift);
+
+                        break;
+                    default:
+                    }
+                }
+
+                return output;
+            }
+            
+            function decodeChar(char, shift) {
+                char = char.toLowerCase();
+                for (var i = 0; i < rows.length; i++) {
+                    var row = rows[i];
+                    for (var j = 0; j < row.length; j++) {
+                        if (row[j] == char) {
+                            return row[j + shift];
+                        }
+                    }
+                }
+                
+                return "?";
+            }
+
+            function code(code) {
+                
+            }
+
+        </script>
+    </body>
+</html>
