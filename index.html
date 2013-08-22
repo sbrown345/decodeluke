@@ -21,11 +21,11 @@
                 "\\zxcvbnm,./".split("")
             ];
 
-            coded.onchange = function() {
+            coded.onchange = coded.onkeyup = function() {
                 decoded.value = decode(coded.value);
             };
 
-            decoded.onchange = function() {
+            decoded.onchange = decoded.onkeyup = function() {
                 coded.value = code(decoded.value);
             };
 
