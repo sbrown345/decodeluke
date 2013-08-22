@@ -21,7 +21,7 @@
                 "\\zxcvbnm,./".split("")
             ];
 
-            coded.onchange = coded.onkeyup = function() {
+            coded.onchange = function() {
                 decoded.value = decode(coded.value);
             };
 
